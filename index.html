@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1a1a2e;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    background: #252545;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  input {
+    width: 70%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+  }
+
+  button {
+    padding: 10px;
+    border: none;
+    background: #c9a96e;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  li {
+    background: #111;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+  }
+
+  li.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .delete {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>📋 To-Do List</h1>
+
+  <input type="text" id="taskInput" placeholder="Ajouter une tâche">
+  <button onclick="addTask()">Ajouter</button>
+
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+
+    if (task.completed) {
+      li.classList.add("completed");
+    }
+
+    li.innerHTML = `
+      <span onclick="toggleTask(${index})">${task.text}</span>
+      <button class="delete" onclick="deleteTask(${index})">X</button>
+    `;
+
+    list.appendChild(li);
+  });
+}
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const text = input.value.trim();
+
+  if (text === "") return;
+
+  tasks.push({ text: text, completed: false });
+  input.value = "";
+
+  saveTasks();
+  renderTasks();
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].completed = !tasks[index].completed;
+  saveTasks();
+  renderTasks();
+}
+
+renderTasks();
+</script>
+
+</body>
+</html>
